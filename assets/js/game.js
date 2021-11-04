@@ -26,14 +26,15 @@ var fight = function(enemyName) {
         if (confirmSkip) {
           window.alert(playerName + ' has decided to skip this fight. Goodbye!');
           // subtract money from playerMoney for skipping
-          playerMoney = playerMoney - 10;
+          playerMoney = Math.max(0, playerMoney - 10);
           console.log("playerMoney", playerMoney)
           break;
         }
       }
-  
+      //generate random damage value based on player's attack power
+      var damage = randomNumber(playerAttack - 3, playerAttack);
       // remove enemy's health by subtracting the amount set in the playerAttack variable
-      enemyHealth = enemyHealth - playerAttack;
+      enemyHealth = Math.max(0, enemyHealth - damage);
       console.log(
         playerName + ' attacked ' + enemyName + '. ' + enemyName + ' now has ' + enemyHealth + ' health remaining.'
       );
@@ -50,9 +51,9 @@ var fight = function(enemyName) {
       } else {
         window.alert(enemyName + ' still has ' + enemyHealth + ' health left.');
       }
-  
+      var damage = randomNumber(enemyAttack - 3, enemyAttack);
       // remove players's health by subtracting the amount set in the enemyAttack variable
-      playerHealth = playerHealth - enemyAttack;
+      playerHealth = Math.max(0, playerHealth - damage);
       console.log(
         enemyName + ' attacked ' + playerName + '. ' + playerName + ' now has ' + playerHealth + ' health remaining.'
       );
@@ -95,21 +96,31 @@ var shop = function() {
     // use switch to carry out an action
     switch (shopOptionPrompt) {
       case "refill":
+      case "REFILL":
+        if (playerMoney >= 7) {
         window.alert("Refilling player's health by 20 for 7 dollars.");
         
     // increase health and decrease money
     playerHealth = playerHealth + 20;
     playerMoney = playerMoney - 7;
+        }
+        else {
+          window.alert ("You dont have enough money!");
+        }
     break;
       case "upgrade":
+      case "UPGRADE":
+        if (playerMoney >= 7) {
       window.alert("Upgrading player's attack by 6 for 7 dollars.");
 
       // increase attack and decrease money
       playerAttack = playerAttack +6;
       playerMoney = playerMoney - 7;
+        }
       break;
 
       case "leave":
+      case "LEAVE":
       window.alert("Leaveing the store.");
 
       //do nothing, so function will end
@@ -122,6 +133,11 @@ var shop = function() {
         break;
     }
   }
+var randomNumber = function (min, max) {
+    var value = Math.floor(Math.random() * (max - min + 1 ) + min);
+    
+    return value;
+}
 var startGame = function() {
   // reset player stats
   playerHealth = 100;
@@ -133,7 +149,7 @@ for (var i = 0; i < enemyNames.length; i++) {
         window.alert("Welcome to Robot Gladiators! Round " + (i + 1));
         var pickedEnemyName = enemyNames[i];
         // reset enemyHealth before starting new fight
-         enemyHealth = 50;
+         enemyHealth = randomNumber(40, 60);
 
          fight(pickedEnemyName);
          // if we're not at the last enemy in the array
